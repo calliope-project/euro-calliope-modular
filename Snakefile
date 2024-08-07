@@ -4,7 +4,6 @@ from pathlib import Path
 from snakemake.utils import validate, min_version, makedirs
 
 configfile: "config/default.yaml"
-validate(config, "config/schema.yaml")
 
 root_dir = config["root-directory"] + "/" if config["root-directory"] not in ["", "."] else ""
 __version__ = open(f"{root_dir}VERSION").readlines()[0].strip()
@@ -12,22 +11,18 @@ test_dir = f"{root_dir}tests/"
 model_test_dir = f"{test_dir}model"
 resources_test_dir = f"{test_dir}resources"
 template_dir = f"{root_dir}templates/"
-model_template_dir = f"{template_dir}models/"
+model_template_dir = f"{template_dir}model/"
 techs_template_dir = f"{model_template_dir}techs/"
 
 include: "./rules/shapes.smk"
-include: "./rules/data.smk"
-include: "./rules/jrc-idees.smk"
 include: "./rules/wind-and-solar.smk"
 include: "./rules/biofuels.smk"
 include: "./rules/hydro.smk"
-include: "./rules/transmission.smk"
 include: "./rules/demand.smk"
 include: "./rules/nuclear.smk"
-include: "./rules/transport.smk"
-include: "./rules/sync.smk"
-include: "./rules/heat.smk"
-include: "./rules/modules.smk"
+include: "./rules/model.smk"
+include: "./rules/transmission.smk"
+
 min_version("8.10")
 localrules: all, clean
 wildcard_constraints:
@@ -42,22 +37,6 @@ ALL_CF_TECHNOLOGIES = [
 ]
 
 
-def ensure_lib_folder_is_linked():
-    if not (hasattr(workflow, "deployment_settings") and not
-            hasattr(workflow.deployment_settings, "conda_prefix")):
-        return
-    link = Path(workflow.deployment_settings.conda_prefix) / "lib"
-    if not link.exists():
-        # Link either does not exist or is an invalid symlink
-        print("Creating link from conda env dir to eurocalliopelib.")
-        if link.is_symlink():  # Deal with existing but invalid symlink
-            shell(f"rm {link}")
-        makedirs(workflow.deployment_settings.conda_prefix)
-        shell(f"ln -s {workflow.basedir}/lib {link}")
-
-
-ensure_lib_folder_is_linked()
-
 onstart:
     shell("mkdir -p build/logs")
 onsuccess:
@@ -69,61 +48,47 @@ onerror:
 
 
 rule all:
-    message: "Generate euro-calliope pre-built models and run tests."
+    message: "Generate euro-calliope pre-built model and run tests."
     localrule: True
     default_target: True
     input:
-        "build/logs/continental/test.success",
-        "build/logs/national/test.success",
+        # "build/logs/test.success",
         expand(
-            "build/models/{resolution}/{file}",
-            resolution=["continental", "national", "regional", "ehighways"],
-            file=["example-model.yaml", "build-metadata.yaml", "summary-of-potentials.nc", "summary-of-potentials.csv"]
-        )
-
-rule all_tests:
-    message: "Generate euro-calliope pre-built models and run all tests."
-    input:
-        expand(
-            "build/logs/{resolution}/test.success",
-            resolution=["continental", "national", "regional", "ehighways"],
-        ),
-        expand(
-            "build/models/{resolution}/{file}",
-            resolution=["continental", "national", "regional", "ehighways"],
-            file=["example-model.yaml", "build-metadata.yaml", "summary-of-potentials.nc", "summary-of-potentials.csv"]
+            "build/model/{file}",
+            # file=["example-model.yaml", "build-metadata.yaml", "summary-of-potentials.nc", "summary-of-potentials.csv"]
+            file=["model.yaml", "build-metadata.yaml"]
         )
 
 
 rule module_with_location_specific_data:
-    message: "Create {wildcards.resolution} definition file for {wildcards.group_and_tech}."
+    message: "Create definition file for {wildcards.group_and_tech}."
     input:
         template = techs_template_dir + "{group_and_tech}.yaml.jinja",
-        locations = "build/data/{resolution}/{group_and_tech}.csv"
+        locations = "build/data/{group_and_tech}.csv"
     params:
         scaling_factors = config["scaling-factors"],
         capacity_factors = config["capacity-factors"]["average"],
         max_power_densities = config["parameters"]["maximum-installable-power-density"],
-        heat_pump_shares = config["parameters"]["heat-pump"]["heat-pump-shares"],
+        # heat_pump_shares = config["parameters"]["heat-pump"]["heat-pump-shares"],
         biofuel_efficiency = config["parameters"]["biofuel-efficiency"],
     wildcard_constraints:
         # Exclude all outputs that have their own `techs_and_locations_template` implementation
         group_and_tech = "(?!transmission\/|supply\/biofuel|supply\/electrified-biofuel).*"
     conda: "envs/default.yaml"
-    output: "build/models/{resolution}/techs/{group_and_tech}.yaml"
+    output: "build/model/techs/{group_and_tech}.yaml"
     script: "scripts/template_techs.py"
 
 use rule module_with_location_specific_data as module_without_location_specific_data with:
     # For all cases where we don't have any location-specific data that we want to supply to the template
     input:
         template = techs_template_dir + "{group_and_tech}.yaml.jinja",
-        locations = rules.locations_module.output.csv
+        locations = rules.model_input_locations.output.csv
 
 rule module_without_specific_data:
-    message: "Create {wildcards.resolution} configuration files from templates where no parameterisation is required."
+    message: "Create configuration files from templates where no parameterisation is required."
     input:
         template = model_template_dir + "{template}",
-    output: "build/models/{resolution}/{template}"
+    output: "build/model/{template}"
     wildcard_constraints:
         template = "interest-rate.yaml"
     conda: "envs/shell.yaml"
@@ -134,27 +99,26 @@ rule auxiliary_files:
     message: "Create auxiliary output files (i.e. those not used to define a Calliope model) from templates where no parameterisation is required."
     input:
         template = template_dir + "{template}",
-    output: "build/models/{template}"
+    output: "build/model/{template}"
     wildcard_constraints:
-        template = "[^/]*"
+        template = "environment.yaml|README.md"
     conda: "envs/shell.yaml"
     shell: "cp {input.template} {output}"
 
 
 rule model:
-    message: "Generate top-level {wildcards.resolution} model configuration file from template"
+    message: "Generate top-level model configuration file from template"
     input:
-        template = model_template_dir + "example-model.yaml.jinja",
+        template = model_template_dir + "model.yaml.jinja",
         auxiliary_files = expand(
-            "build/models/{template}", template=["environment.yaml", "README.md"]
+            "build/model/{template}", template=["environment.yaml", "README.md"]
         ),
         modules = expand(
-            "build/models/{{resolution}}/{module}",
+            "build/model/{module}",
             module=[
                 "interest-rate.yaml",
                 "locations.yaml",
                 "techs/demand/electricity.yaml",
-                "techs/demand/electrified-transport.yaml",
                 "techs/storage/electricity.yaml",
                 "techs/storage/hydro.yaml",
                 "techs/supply/hydro.yaml",
@@ -165,47 +129,24 @@ rule model:
                 "techs/supply/nuclear.yaml",
             ]
         ),
-        heat_timeseries_data = (
-            "build/models/{resolution}/timeseries/conversion/heat-pump-cop.csv",
-            "build/models/{resolution}/timeseries/supply/historic-electrified-heat.csv",
-        ),
         capacityfactor_timeseries_data = expand(
-            "build/models/{{resolution}}/timeseries/supply/capacityfactors-{technology}.csv",
+            "build/model/timeseries/supply/capacityfactors-{technology}.csv",
             technology=ALL_CF_TECHNOLOGIES
         ),
         demand_timeseries_data = expand(
-            "build/models/{{resolution}}/timeseries/demand/{filename}",
+            "build/model/timeseries/demand/{filename}",
             filename=[
                 "electricity.csv",
-                "uncontrolled-electrified-road-transport.csv",
-                "uncontrolled-road-transport-historic-electrification.csv",
-                "demand-shape-min-ev.csv",
-                "demand-shape-max-ev.csv",
-                "demand-shape-equals-ev.csv",
-                "plugin-profiles-ev.csv",
-                "heat.csv",
-                "electrified-heat.csv",
             ]
         ),
-        optional_transmission_modules = lambda wildcards: expand(
-            f"build/models/{wildcards.resolution}/{{module}}",
-            module=[
-                "techs/transmission/electricity-linked-neighbours.yaml",
-            ] + ["techs/transmission/electricity-entsoe.yaml" for i in [None] if wildcards.resolution == "national"]
-        ),
-        optional_heat_modules = expand(
-            "build/models/{{resolution}}/{module}",
-            module=[
-                "techs/demand/heat.yaml",
-                "techs/demand/electrified-heat.yaml",
-                "techs/storage/heat.yaml",
-                "techs/conversion/heat-from-electricity.yaml",
-                "techs/conversion/heat-from-biofuel.yaml",
-                "techs/supply/historic-electrified-heat.yaml"
-            ]
-        ),
+        # optional_transmission_modules = lambda wildcards: expand(
+        #     f"build/model/{{module}}",
+        #     module=[
+        #         "techs/transmission/electricity-linked-neighbours.yaml",
+        #     ] + ["techs/transmission/electricity-entsoe.yaml" for i in [None] if wildcards.resolution == "national"]
+        # ),
         optional_biofuel_modules = expand(
-            "build/models/{{resolution}}/{module}",
+            "build/model/{module}",
             module=[
                 "techs/supply/biofuel.yaml",
                 "techs/supply/electrified-biofuel.yaml",
@@ -213,37 +154,31 @@ rule model:
             ]
         )
     params:
-        year = config["scope"]["temporal"]["first-year"]
+        year = config["scope"]["temporal"]["first-year"],
+        resolution = config["resolution"],
     conda: "envs/default.yaml"
-    output: "build/models/{resolution}/example-model.yaml"
+    output: "build/model/model.yaml"
     script: "scripts/template_model.py"
 
 
 rule build_metadata:
     message: "Generate build metadata."
     input:
-        "build/models/{resolution}/example-model.yaml",
+        "build/model/model.yaml",
     params:
         config = config,
         version = __version__
-    output: "build/models/{resolution}/build-metadata.yaml"
+    output: "build/model/build-metadata.yaml"
     conda: "envs/default.yaml"
     script: "scripts/metadata.py"
 
 
-rule dag_dot:
-    output: temp("build/dag.dot")
-    shell:
-        "snakemake --rulegraph > {output}"
-
-
 rule dag:
     message: "Plot dependency graph of the workflow."
-    input: rules.dag_dot.output[0]
     # Output is deliberatly omitted so rule is executed each time.
-    conda: "envs/dag.yaml"
+    conda: "envs/shell.yaml"
     shell:
-        "dot -Tpdf {input} -o build/dag.pdf"
+        "snakemake --rulegraph | dot -Tpdf {input} -o build/dag.pdf"
 
 
 rule clean:  # removes all generated results
@@ -253,44 +188,3 @@ rule clean:  # removes all generated results
         rm -r build/
         echo "Data downloaded to data/automatic/ has not been cleaned."
         """
-
-
-rule test:
-    message: "Run tests"
-    input:
-        test_dir = model_test_dir,
-        test_resources_dir = resources_test_dir,
-        tests = map(str, Path(model_test_dir).glob("**/test_*.py")),
-        example_model = "build/models/{resolution}/example-model.yaml",
-        capacity_factor_timeseries = expand(
-            "build/models/{{resolution}}/timeseries/supply/capacityfactors-{technology}.csv",
-            technology=ALL_CF_TECHNOLOGIES
-        ),
-        electrified_heat_demand = "build/models/{resolution}/timeseries/demand/electrified-heat.csv",
-        heat_demand = "build/models/{resolution}/timeseries/demand/heat.csv",
-        historic_electrified_heat = "build/models/{resolution}/timeseries/supply/historic-electrified-heat.csv",
-        cop = "build/models/{resolution}/timeseries/conversion/heat-pump-cop.csv"
-    params:
-        config = config,
-        test_args = []  # add e.g. "--pdb" to enter ipdb on test failure
-    log: "build/logs/{resolution}/test-report.html"
-    output: "build/logs/{resolution}/test.success"
-    conda: "./envs/test.yaml"
-    resources:
-        runtime = 240
-    script: "./tests/model/test_runner.py"
-
-
-rule summarise_potentials:
-    message: "Generates netcdf and csv file with potentials for each technology."
-    input:
-        path_to_model = "build/models/{resolution}/example-model.yaml"
-    output:
-        netcdf = "build/models/{resolution}/summary-of-potentials.nc",
-        csv = "build/models/{resolution}/summary-of-potentials.csv"
-    params:
-        scaling_factors = config["scaling-factors"]
-    conda:
-        "./envs/test.yaml"
-    script:
-        "./scripts/summarise_potentials.py"

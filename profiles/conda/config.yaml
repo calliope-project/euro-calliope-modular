@@ -1,3 +1,0 @@
-# These parameter are considered additional to ./profiles/default/config.yaml.
-# Apply them using the `--profile="profiles/conda` cli option.
-conda-frontend: conda

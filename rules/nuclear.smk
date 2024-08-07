@@ -17,13 +17,14 @@ rule jrc_power_plant_database:
 
 
 rule nuclear_regional_capacity:
-    message: "Use current geolocations of nuclear capacity in Europe to assign nuclear capacity to {wildcards.resolution} regions."
+    message: "Use current geolocations of nuclear capacity in Europe to assign nuclear capacity to regions."
     input:
         power_plant_database = rules.jrc_power_plant_database.output[0],
         units = rules.units.output[0]
     params:
         nuclear_capacity_scenario = config["parameters"]["nuclear-capacity-scenario"],
-        countries = config["scope"]["spatial"]["countries"]
+        countries = config["scope"]["spatial"]["countries"],
+        resolution = config["resolution"],
     conda: "../envs/geo.yaml"
-    output: "build/data/{resolution}/supply/nuclear.csv"
+    output: "build/data/supply/nuclear.csv"
     script: "../scripts/nuclear/regional_capacity.py"

@@ -1,41 +1,33 @@
-# Euro-Calliope
+# `euro-calliope-modular`
 
-Models of the European electricity system for _Calliope_.
+An experimental euro-calliope model generation workflow built around a modular approach, with a focus on improved understandability, reproducibility, and usability for non-software-developers.
 
-This repository contains the workflow routines that automatically build models from raw data. Alternatively to building models yourself, you can use [pre-built models](https://doi.org/10.5281/zenodo.3949552) that run out-of-the-box. You can find a more detailed description of the first application in a [scientific article in Joule](https://doi.org/10.1016/j.joule.2020.07.018).
+Forked from [euro-calliope@3379a28](https://github.com/calliope-project/euro-calliope/commit/3379a28354548f664b35ea9194593e12d7366531)
 
-[![article DOI](https://img.shields.io/badge/article-10.1016/j.joule.2020.07.018-blue)](https://doi.org/10.1016/j.joule.2020.07.018)
-[![pre-built models DOI](https://img.shields.io/badge/prebuilts-10.5281%2Fzenodo.3949552-blue)](https://doi.org/10.5281/zenodo.3949552)
-[![Documentation Status](https://readthedocs.org/projects/euro-calliope/badge/?version=latest)](https://euro-calliope.readthedocs.io/en/latest/?badge=latest)
-[![Check Markdown links](https://github.com/calliope-project/euro-calliope/actions/workflows/externallinks.yaml/badge.svg)](https://github.com/calliope-project/euro-calliope/actions/workflows/externallinks.yaml)
-[![Tests of YAML configuration and schema](https://github.com/calliope-project/euro-calliope/actions/workflows/schemavalidation.yaml/badge.svg)](https://github.com/calliope-project/euro-calliope/actions/workflows/schemavalidation.yaml)
-[![Tests of eurocalliopelib and scripts](https://github.com/calliope-project/euro-calliope/actions/workflows/pythonpackage.yaml/badge.svg)](https://github.com/calliope-project/euro-calliope/actions/workflows/pythonpackage.yaml)
+## Main changes compared to `euro-calliope`
 
-## At a glance
+* Removed resolution wildcard. Resolution is in the configuration instead. This means the workflow must be run multiple times to build more than one resolution.
+* Some other wildcard use reduced in favour of configuration and params (e.g. in the `potentials` rule).
+* Removed all non-electric sectors from the workflow (to be re-introduced via modules).
+* Hydro rules removed and replaced with a rule that downloads hydro data from a known location (to be replaced with a hydro module).
+* Rules related to producing `units.geojson` removed and replaced with a rule that downloads `units.geojson` from a known location.
+* Due to persistent installation issues, `eurocalliopelib` is not an editable installation any more, so environments need to be re-built every time changes to `eurocalliopelib` are made. Ideally it will be turned into a versioned, separate package that can be installed from a known remote location.
+* Removed special code to deal with linking `eurocalliopelib`.
+* Removed non-default profiles, sync rules, and other custom configuration.
+* Default profile does not override `conda-prefix` any more, so conda envs are stored in the default location (`.snakemake/conda`).
+* Reduced number of conda environments.
 
-Euro-Calliope models the European electricity system with each location representing an administrative unit. It is built on three spatial resolutions: on the continental level as a single location, on the national level with 34 locations, and on the regional level with 497 locations. At each location, renewable generation capacities (wind, solar, bioenergy) and balancing capacities (battery, hydrogen) can be built. In addition, hydro electricity and pumped hydro storage capacities can be built up to the extent to which they exist today. All capacities are used to satisfy electricity demand on all locations where demand is based on historic data. Locations are connected through transmission lines of either unrestricted capacity or projections. Using [Calliope](https://www.callio.pe), the model is formulated as a linear optimisation problem with total monetary cost of all capacities as the minimisation objective. Due to the flexibility of Calliope and the availability of the routines building the model all components can be adapted to the modeller's needs.
+## Temporary changes while this is work-in-progress
 
-## More information
+* Removed documentation and tests (to be re-introduced).
+* Removed main configuration schema (to be re-introduced after simplification is concluded; likely, the remaining configuration will be dramatically reduced).
 
-Here is where you can find more information:
+## Todo and open issues
 
-* [Full documentation](https://euro-calliope.readthedocs.io/)
-* [Release notes](./CHANGELOG.md)
-* [Citation information](./docs/about/citation.md)
-* [Contributing information](./CONTRIBUTING.md)
-* [License](./LICENSE.md)
-
-If you are unable to access the full documentation via ReadTheDocs following the link above, or otherwise want to build the documentation locally, you can run the following from the repository top-level directory (assuming you have [conda](https://conda.io) installed):
-
-
-```bash
-conda env create -f requirements-docs.yaml
-conda activate docs
-mkdocs build --no-directory-urls
-```
-
-The documentation can then be accessed by opening `build/docs/index.html`.
+* For now, only a national-level 2016 model can be built due to hardcoded hydro data download. This will be replaced by a hydro module that replicates the existing hydro-related functionality.
+* Configuration parameters need to be cleaned up - many of them are no longer used.
+* `scope.spatial` in the configuration is not consistent with downloading a pre-generated units file and needs to be revised or removed
 
 ## License
 
-Euro-Calliope is developed and maintained within the [Calliope project](https://www.callio.pe). The code in this repository is [MIT licensed](./LICENSE.md).
+Based on the original euro-calliope repository, licensed under the same MIT License.

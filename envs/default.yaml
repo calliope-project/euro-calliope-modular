@@ -17,8 +17,8 @@ dependencies:
     - netCDF4=1.6.2
     - hdf5=1.12.2
     - libnetcdf=4.8.1
-    - scipy=1.9.1
+    - scipy=1.9.1  # was scipy=1.6.2 in geo
     - dask=2023.2.0
     - pip:
-        - -e ./lib
+        - ../../lib  # NB: this only works if the default conda-prefix is not changed
         - styleframe==4.2

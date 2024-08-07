@@ -108,6 +108,6 @@ if __name__ == "__main__":
         path_to_units=snakemake.input.units,
         nuclear_capacity_scenario=snakemake.params.nuclear_capacity_scenario,
         countries=snakemake.params.countries,
-        resolution=snakemake.wildcards.resolution,
+        resolution=snakemake.params.resolution,
         path_to_output=snakemake.output[0],
     )

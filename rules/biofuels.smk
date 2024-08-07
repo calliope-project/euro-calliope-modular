@@ -27,7 +27,7 @@ rule preprocess_biofuel_potentials_and_cost:
 
 
 rule biofuels:
-    message: "Determine biofuels potential on {wildcards.resolution} resolution for scenario {wildcards.scenario}."
+    message: "Determine biofuels potential for scenario {wildcards.scenario}."
     input:
         units = rules.units_without_shape.output[0],
         land_cover = rules.potentials.output.land_cover,
@@ -43,8 +43,8 @@ rule biofuels:
             if feedstock["include"]
         }
     output:
-        potentials = "build/data/{resolution}/biofuel/{scenario}/potential-mwh-per-year.csv",
-        costs = "build/data/{resolution}/biofuel/{scenario}/costs-eur-per-mwh.csv" # not actually resolution dependent
+        potentials = "build/data/biofuel/{scenario}/potential-mwh-per-year.csv",
+        costs = "build/data/biofuel/{scenario}/costs-eur-per-mwh.csv" # not actually resolution dependent
     conda: "../envs/default.yaml"
     wildcard_constraints:
         scenario = "low|medium|high"
@@ -55,15 +55,15 @@ rule biofuel_tech_module:
     message: "Create {wildcards.tech_module} tech definition file from template."
     input:
         template = techs_template_dir + "supply/{tech_module}.yaml.jinja",
-        biofuel_cost = "build/data/regional/biofuel/{scenario}/costs-eur-per-mwh.csv".format(
+        biofuel_cost = "build/data/biofuel/{scenario}/costs-eur-per-mwh.csv".format(
             scenario=config["parameters"]["jrc-biofuel"]["scenario"]
         ),
-        locations = "build/data/{{resolution}}/biofuel/{scenario}/potential-mwh-per-year.csv".format(scenario=config["parameters"]["jrc-biofuel"]["scenario"])
+        locations = "build/data/biofuel/{scenario}/potential-mwh-per-year.csv".format(scenario=config["parameters"]["jrc-biofuel"]["scenario"])
     params:
         scaling_factors = config["scaling-factors"],
         biofuel_efficiency = config["parameters"]["biofuel-efficiency"]
     conda: "../envs/default.yaml"
-    output: "build/models/{resolution}/techs/supply/{tech_module}.yaml"
+    output: "build/model/techs/supply/{tech_module}.yaml"
     wildcard_constraints:
         tech_module = "biofuel|electrified-biofuel"
     script: "../scripts/biofuels/template_bio.py"

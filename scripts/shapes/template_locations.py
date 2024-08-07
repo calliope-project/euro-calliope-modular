@@ -36,7 +36,7 @@ if __name__ == "__main__":
     construct_locations(
         path_to_shapes=snakemake.input.shapes,
         path_to_template=snakemake.input.template,
-        resolution=snakemake.wildcards.resolution,
+        resolution=snakemake.params.resolution,
         path_to_output_yaml=snakemake.output.yaml,
         path_to_output_csv=snakemake.output.csv,
     )

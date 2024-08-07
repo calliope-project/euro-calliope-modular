@@ -25,13 +25,13 @@ rule electricity_load_national:
 
 
 rule electricity_load:
-    message: "Generate electricity load time series for every location on {wildcards.resolution} resolution."
+    message: "Generate electricity load time series for every location."
     input:
         units = rules.units.output[0],
         demand_per_unit = rules.potentials.output.demand,
         national_load = rules.electricity_load_national.output[0]
     params:
         scaling_factor = config["scaling-factors"]["power"]
-    output: "build/models/{resolution}/timeseries/demand/electricity.csv"
+    output: "build/model/timeseries/demand/electricity.csv"
     conda: "../envs/geo.yaml"
     script: "../scripts/demand/load.py"
