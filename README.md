@@ -1,8 +1,10 @@
 # `euro-calliope-modular`
 
-An experimental euro-calliope model generation workflow built around a modular approach, with a focus on improved understandability, reproducibility, and usability for non-software-developers.
+A euro-calliope model creation workflow built around a modular approach, with a focus on improved understandability, reproducibility, and usability for non-software-developers.
 
-Forked from [euro-calliope@3379a28](https://github.com/calliope-project/euro-calliope/commit/3379a28354548f664b35ea9194593e12d7366531)
+## Modules
+
+* [hydro](https://github.com/calliope-project/ec_modules/tree/feature-hydro/modules/hydro): generates hydropower time series and capacity data
 
 ## Main changes compared to `euro-calliope`
 
@@ -24,10 +26,11 @@ Forked from [euro-calliope@3379a28](https://github.com/calliope-project/euro-cal
 
 ## Todo and open issues
 
-* For now, only a national-level 2016 model can be built due to hardcoded hydro data download. This will be replaced by a hydro module that replicates the existing hydro-related functionality.
 * Configuration parameters need to be cleaned up - many of them are no longer used.
 * `scope.spatial` in the configuration is not consistent with downloading a pre-generated units file and needs to be revised or removed
 
 ## License
 
-Based on the original euro-calliope repository, licensed under the same MIT License.
+Based on [euro-calliope@3379a28](https://github.com/calliope-project/euro-calliope/commit/3379a28354548f664b35ea9194593e12d7366531).
+
+Licensed under the same MIT License.

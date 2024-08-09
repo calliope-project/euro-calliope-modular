@@ -24,4 +24,4 @@ dependencies:
     - pip=21.0.1
     - shapely=1.8.5
     - pip:
-        - ../../lib  # NB: this only works if the default conda-prefix is not changed
+        - "git+https://github.com/calliope-project/ec_utils.git@v0.1.0"

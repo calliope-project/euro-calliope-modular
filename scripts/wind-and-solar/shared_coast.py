@@ -98,8 +98,7 @@ def allocate_eezs(
 
     # Ensure we haven't missed any EEZ areas
     share_sum = share.groupby(level="MRGID").sum().reindex(eez.MRGID.unique()).fillna(0)
-    # FIXME: this check is failing for unknown reasons...
-    # assert ((share_sum > 0.99) & (share_sum < 1.01)).all(), share_sum
+    assert ((share_sum > 0.99) & (share_sum < 1.01)).all(), share_sum
 
     share.rename("shared_coast_fraction").to_csv(path_to_output)
 

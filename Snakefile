@@ -37,25 +37,13 @@ ALL_CF_TECHNOLOGIES = [
 ]
 
 
-onstart:
-    shell("mkdir -p build/logs")
-onsuccess:
-     if "email" in config.keys():
-         shell("echo "" | mail -s 'euro-calliope succeeded' {config[email]}")
-onerror:
-     if "email" in config.keys():
-         shell("echo "" | mail -s 'euro-calliope failed' {config[email]}")
-
-
 rule all:
-    message: "Generate euro-calliope pre-built model and run tests."
+    message: "Generate euro-calliope model and run tests."
     localrule: True
     default_target: True
     input:
-        # "build/logs/test.success",
         expand(
             "build/model/{file}",
-            # file=["example-model.yaml", "build-metadata.yaml", "summary-of-potentials.nc", "summary-of-potentials.csv"]
             file=["model.yaml", "build-metadata.yaml"]
         )
 
@@ -159,18 +147,6 @@ rule model:
     conda: "envs/default.yaml"
     output: "build/model/model.yaml"
     script: "scripts/template_model.py"
-
-
-rule build_metadata:
-    message: "Generate build metadata."
-    input:
-        "build/model/model.yaml",
-    params:
-        config = config,
-        version = __version__
-    output: "build/model/build-metadata.yaml"
-    conda: "envs/default.yaml"
-    script: "scripts/metadata.py"
 
 
 rule dag:

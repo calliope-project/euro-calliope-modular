@@ -1,4 +1,4 @@
-name: euro-calliope
+name: euro-calliope-modular
 channels:
     - conda-forge
     - bioconda
