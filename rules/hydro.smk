@@ -43,6 +43,7 @@ else:  # config["download-hydro"] is False
 
     use rule * from module_hydro as module_hydro_*
 
+
     rule data_hydro:
         message: "Move into place the capacity assumptions and capacityfactor time series for hydro electricity."
         input: # the files produced by hydro module

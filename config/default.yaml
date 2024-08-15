@@ -27,11 +27,14 @@ scaling-factors: # values are tuned for models with a few hours resolution and o
 download-hydro: false
 download-hydro-url: ""
 module-hydro:
-    resolution-name: *resolution_name
+    resolution_name: *resolution_name
     # FIXME: the module should not have to separately download the same resolution file
-    resolution-file: *resolution_file
-    first-year: 2016
-    final-year: 2016
+    resolution_file: *resolution_file
+    first_year: 2016
+    final_year: 2016
+    hydro_power_database_version: "v10"
+    basins:
+        HydroBASINS_level: "07"
 
 ##
 # Assumptions
