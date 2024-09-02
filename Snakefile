@@ -5,14 +5,6 @@ from snakemake.utils import validate, min_version, makedirs
 
 configfile: "config/default.yaml"
 
-root_dir = config["root-directory"] + "/" if config["root-directory"] not in ["", "."] else ""
-__version__ = open(f"{root_dir}VERSION").readlines()[0].strip()
-test_dir = f"{root_dir}tests/"
-model_test_dir = f"{test_dir}model"
-resources_test_dir = f"{test_dir}resources"
-template_dir = f"{root_dir}templates/"
-model_template_dir = f"{template_dir}model/"
-techs_template_dir = f"{model_template_dir}techs/"
 
 include: "./rules/shapes.smk"
 include: "./rules/wind-and-solar.smk"
@@ -26,7 +18,7 @@ include: "./rules/model.smk"
 include: "./rules/transmission.smk"
 
 min_version("8.10")
-localrules: all, clean
+
 wildcard_constraints:
     resolution = "continental|national|regional|ehighways",
     group_and_tech = "(demand|storage|supply|transmission)\/\w+"
@@ -44,16 +36,13 @@ rule all:
     localrule: True
     default_target: True
     input:
-        expand(
-            "build/model/{file}",
-            file=["model.yaml"]
-        ) # TODO: add build-metadata.yaml back if necessary
+        "build/model/model.yaml" # TODO: add build-metadata.yaml back after modules have matured
 
 
 rule module_with_location_specific_data:
     message: "Create definition file for {wildcards.group_and_tech}."
     input:
-        template = techs_template_dir + "{group_and_tech}.yaml.jinja",
+        template = "templates/model/techs/{group_and_tech}.yaml.jinja",
         locations = "build/data/{group_and_tech}.csv"
     params:
         scaling_factors = config["scaling-factors"],
@@ -71,13 +60,13 @@ rule module_with_location_specific_data:
 use rule module_with_location_specific_data as module_without_location_specific_data with:
     # For all cases where we don't have any location-specific data that we want to supply to the template
     input:
-        template = techs_template_dir + "{group_and_tech}.yaml.jinja",
+        template = "templates/model/techs/{group_and_tech}.yaml.jinja",
         locations = rules.model_input_locations.output.csv
 
 rule module_without_specific_data:
     message: "Create configuration files from templates where no parameterisation is required."
     input:
-        template = model_template_dir + "{template}",
+        template = "templates/model/{template}",
     output: "build/model/{template}"
     wildcard_constraints:
         template = "interest-rate.yaml"
@@ -88,7 +77,7 @@ rule module_without_specific_data:
 rule auxiliary_files:
     message: "Create auxiliary output files (i.e. those not used to define a Calliope model) from templates where no parameterisation is required."
     input:
-        template = template_dir + "{template}",
+        template = "templates/{template}",
     output: "build/model/{template}"
     wildcard_constraints:
         template = "environment.yaml|README.md"
@@ -99,7 +88,7 @@ rule auxiliary_files:
 rule model:
     message: "Generate top-level model configuration file from template"
     input:
-        template = model_template_dir + "model.yaml.jinja",
+        template = "templates/model/model.yaml.jinja",
         auxiliary_files = expand(
             "build/model/{template}", template=["environment.yaml", "README.md"]
         ),

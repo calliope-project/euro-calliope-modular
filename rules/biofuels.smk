@@ -54,7 +54,7 @@ rule biofuels:
 rule biofuel_tech_module:
     message: "Create {wildcards.tech_module} tech definition file from template."
     input:
-        template = techs_template_dir + "supply/{tech_module}.yaml.jinja",
+        template = "templates/model/techs/supply/{tech_module}.yaml.jinja",
         biofuel_cost = "build/data/biofuel/{scenario}/costs-eur-per-mwh.csv".format(
             scenario=config["parameters"]["jrc-biofuel"]["scenario"]
         ),

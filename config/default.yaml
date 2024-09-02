@@ -2,17 +2,15 @@
 # General configuration
 ##
 
-resolution: &resolution_name "national"
+resolution: "national"
 # NB: `spatial-zones` should match the resolution set in `resolution`
 # FIXME: this should be improved one way or another...
 # Options:
 # - ehighways: https://www.dropbox.com/scl/fi/ijfihaqy5eki13nplvrn4/units-ehighways.geojson?rlkey=q0agmofhaklt1pytzef59o1xq&dl=0
 # - national: https://www.dropbox.com/scl/fi/sjjisuqnzck2mhxs9jca7/units-national.geojson?rlkey=rv0q1exsytxws3gfvankbt9p7&dl=0
-spatial-zones: &resolution_file "https://www.dropbox.com/scl/fi/sjjisuqnzck2mhxs9jca7/units-national.geojson?rlkey=rv0q1exsytxws3gfvankbt9p7&dl=0"
+spatial-zones: "https://www.dropbox.com/scl/fi/sjjisuqnzck2mhxs9jca7/units-national.geojson?rlkey=rv0q1exsytxws3gfvankbt9p7&dl=0"
 
 crs: "EPSG:4326"  # FIXME: unknown if this is still used
-
-root-directory: .  # FIXME: is this really necessary? if not, remove it and the associated items in Snakefile
 
 scaling-factors: # values are tuned for models with a few hours resolution and one year duration
     power: 0.00001 # from MW(h) to 100 GW(h)
@@ -166,9 +164,6 @@ quality-control:
         data-source-priority-order:
             - actual_entsoe_transparency
             - actual_entsoe_power_statistics
-    hydro:
-        scale-phs-according-to-geth-et-al: false
-        station-nearest-basin-max-km: 1
     capacity-factor-gridcell-overlap-threshold: 0.97 # Ceuta y Melilla has smallest overlap
     shared-coast-polygon-area-share-threshold: 0.01
 
