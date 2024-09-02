@@ -46,8 +46,8 @@ rule all:
     input:
         expand(
             "build/model/{file}",
-            file=["model.yaml", "build-metadata.yaml"]
-        )
+            file=["model.yaml"]
+        ) # TODO: add build-metadata.yaml back if necessary
 
 
 rule module_with_location_specific_data:
