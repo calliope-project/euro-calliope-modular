@@ -1,6 +1,6 @@
 build
 data
-module-*
+module_*/
 
 notebooks
 

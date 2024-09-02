@@ -17,7 +17,9 @@ techs_template_dir = f"{model_template_dir}techs/"
 include: "./rules/shapes.smk"
 include: "./rules/wind-and-solar.smk"
 include: "./rules/biofuels.smk"
-include: "./rules/hydro.smk"
+include: "./rules/hydropower.smk"
+include: "./rules/transport.smk"
+include: "./rules/heat.smk"
 include: "./rules/demand.smk"
 include: "./rules/nuclear.smk"
 include: "./rules/model.smk"
@@ -127,12 +129,6 @@ rule model:
                 "electricity.csv",
             ]
         ),
-        # optional_transmission_modules = lambda wildcards: expand(
-        #     f"build/model/{{module}}",
-        #     module=[
-        #         "techs/transmission/electricity-linked-neighbours.yaml",
-        #     ] + ["techs/transmission/electricity-entsoe.yaml" for i in [None] if wildcards.resolution == "national"]
-        # ),
         optional_biofuel_modules = expand(
             "build/model/{module}",
             module=[

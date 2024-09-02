@@ -21,22 +21,6 @@ scaling-factors: # values are tuned for models with a few hours resolution and o
     transport: 0.01  # from Mio km to 100 Mio km
 
 ##
-# Module configuration
-##
-
-download-hydro: false
-download-hydro-url: ""
-module-hydro:
-    resolution_name: *resolution_name
-    # FIXME: the module should not have to separately download the same resolution file
-    resolution_file: *resolution_file
-    first_year: 2016
-    final_year: 2016
-    hydro_power_database_version: "v10"
-    basins:
-        HydroBASINS_level: "07"
-
-##
 # Assumptions
 ##
 

@@ -3,6 +3,6 @@ channels:
     - conda-forge
     - bioconda
 dependencies:
-    - python=3.11
+    - python=3.12
     - pycountry=18.12.8
     - snakemake-minimal=8.18
