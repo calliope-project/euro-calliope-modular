@@ -11,7 +11,7 @@ end_of_line = lf
 insert_final_newline = true
 charset = utf-8
 
-[*.{yaml,yml}]
+[*.{yaml,yml,yaml.jinja,yml.jinja}]
 indent_size = 2
 
 [*.md]
