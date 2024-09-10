@@ -19,7 +19,7 @@ techs:
       dims: costs
   hydro_reservoir:  # from [@JRC:2014] Table 12
     name: Hydro electricity with a reservoir.
-    base_tech: supply_plus
+    base_tech: supply
     include_storage: true
     carrier_out: electricity
     source_unit: per_cap
@@ -39,14 +39,14 @@ techs:
 
 data_sources:
   hydro_run_of_river_timeseries:
-    source: supply/capacityfactors-hydro-run-of-river.csv
+    source: timeseries/supply/capacityfactors-hydro-run-of-river.csv
     columns: nodes
     rows: timesteps
     add_dims:
       techs: hydro_run_of_river
       parameters: source_use_equals
   hydro_reservoir_timeseries:
-    source: supply/capacityfactors-hydro-reservoir.csv
+    source: timeseries/supply/capacityfactors-hydro-reservoir.csv
     columns: nodes
     rows: timesteps
     add_dims:

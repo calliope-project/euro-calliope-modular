@@ -3,7 +3,7 @@ techs:
     name: Load shedding as last resort
     base_tech: supply
     carrier_out: electricity
-    flow_cap_max: inf
+    flow_cap_max: .inf
     cost_flow_out:
       data: {{ 8000 * scaling_factors.specific_costs }} # {{ (1 / scaling_factors.specific_costs) | unit("EUR/MWh") }}
       index: monetary

@@ -27,7 +27,7 @@ techs:
     # open_field_pv and wind_onshore_competing are the only technologies with area footprints
     # as they are the only technologies competing on the same land.
     area_use_per_flow_cap: {{ (1 / max_power_densities["pv-on-flat-areas"]) * scaling_factors.area / scaling_factors.power }} # {{ (scaling_factors.power / scaling_factors.area) | unit("km^2/MW") }} from [@Gagnon:2016][@Klauser:2016][@Wirth:2017]
-    area_use_max: inf # see https://github.com/calliope-project/calliope/pull/160
+    area_use_max: .inf # see https://github.com/calliope-project/calliope/pull/160
     source_unit: per_cap
     lifetime: 25
     cost_flow_cap:
@@ -51,7 +51,7 @@ techs:
     # open_field_pv and wind_onshore_competing are the only technologies with area footprints
     # as they are the only technologies competing on the same land.
     area_use_per_flow_cap: {{ (1 / max_power_densities["onshore-wind"]) * scaling_factors.area / scaling_factors.power }} # {{ (scaling_factors.power / scaling_factors.area) | unit("km^2/MW") }} from [@EuropeanEnvironmentAgency:2009]
-    area_use_max: inf # see https://github.com/calliope-project/calliope/pull/160
+    area_use_max: .inf # see https://github.com/calliope-project/calliope/pull/160
 
 
 overrides:
@@ -102,21 +102,21 @@ nodes:
 
 data_sources:
   open_field_pv_timeseries:
-    source: supply/capacityfactors-open-field-pv.csv
+    source: timeseries/supply/capacityfactors-open-field-pv.csv
     columns: nodes
     rows: timesteps
     add_dims:
       techs: open_field_pv
       parameters: source_use_max
   wind_onshore_monopoly_timeseries:
-    source: supply/capacityfactors-wind-onshore.csv
+    source: timeseries/supply/capacityfactors-wind-onshore.csv
     columns: nodes
     rows: timesteps
     add_dims:
       techs: wind_onshore_monopoly
       parameters: source_use_max
   wind_onshore_competing_timeseries:
-    source: supply/capacityfactors-wind-onshore.csv
+    source: timeseries/supply/capacityfactors-wind-onshore.csv
     columns: nodes
     rows: timesteps
     add_dims:

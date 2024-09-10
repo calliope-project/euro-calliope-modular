@@ -1,5 +1,5 @@
 module_hydropower:
-  use_default_user_input: False
+  use_default_user_resources: False
   JRC_hydropower_plants_version: "v10"
   HydroBASINS_level: "07"
   year_shift: 1

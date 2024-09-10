@@ -11,15 +11,15 @@ wildcard_constraints:
 
 ruleorder: module_with_location_specific_data > module_without_location_specific_data
 
-rule module_without_specific_data:
-    message: "Create configuration files from templates where no parameterisation is required."
-    input:
-        template = "templates/model/{template}",
-    output: "build/model/{template}"
-    wildcard_constraints:
-        template = "interest-rate.yaml"
-    conda: "../envs/shell.yaml"
-    shell: "cp {input.template} {output}"
+# rule module_without_specific_data:
+#     message: "Create configuration files from templates where no parameterisation is required."
+#     input:
+#         template = "templates/model/{template}",
+#     output: "build/model/{template}"
+#     wildcard_constraints:
+#         template = "interest-rate.yaml"
+#     conda: "../envs/shell.yaml"
+#     shell: "cp {input.template} {output}"
 
 
 rule module_with_location_specific_data:
@@ -69,7 +69,7 @@ rule model:
         modules = expand(
             "build/model/{module}",
             module=[
-                "interest-rate.yaml",
+                # "interest-rate.yaml",
                 "locations.yaml",
                 "techs/demand/electricity.yaml",
                 "techs/storage/electricity.yaml",

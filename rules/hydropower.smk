@@ -5,7 +5,7 @@ module module_hydropower:
         github(
             "calliope-project/ec_modules",
             path="modules/hydropower/workflow/Snakefile",
-            branch="feature-standard-io" # FIXME: replace branch= with tag="vXXX"
+            branch="main" # FIXME: replace tag="vXXX"
         )
     config: config["module_hydropower"]
     prefix: "module_hydropower"
@@ -15,7 +15,7 @@ use rule * from module_hydropower as module_hydropower_*
 rule hydropower_input:
     message: "Input the desired resolution to the hydropower module."
     input: "build/data/units.geojson"
-    output: "module_hydropower/resources/user_input/units.geojson"
+    output: "module_hydropower/resources/user/units.geojson"
     conda: "../envs/shell.yaml"
     shell: "cp {input} {output}"
 

@@ -25,7 +25,7 @@ techs:
 
 data_sources:
   roof_mounted_pv_timeseries:
-    source: supply/capacityfactors-rooftop-pv.csv
+    source: timeseries/supply/capacityfactors-rooftop-pv.csv
     columns: nodes
     rows: timesteps
     add_dims:
@@ -73,21 +73,21 @@ overrides:
 
     data_sources:
       roof_mounted_pv_s_flat_timeseries:
-        source: supply/capacityfactors-rooftop-pv-s-flat.csv
+        source: timeseries/supply/capacityfactors-rooftop-pv-s-flat.csv
         columns: nodes
         rows: timesteps
         add_dims:
           techs: roof_mounted_pv_s_flat
           parameters: source_use_max
       roof_mounted_pv_n_timeseries:
-        source: supply/capacityfactors-rooftop-pv-n.csv
+        source: timeseries/supply/capacityfactors-rooftop-pv-n.csv
         columns: nodes
         rows: timesteps
         add_dims:
           techs: roof_mounted_pv_n
           parameters: source_use_max
       roof_mounted_pv_e_w_timeseries:
-        source: supply/capacityfactors-rooftop-pv-e-w.csv
+        source: timeseries/supply/capacityfactors-rooftop-pv-e-w.csv
         columns: nodes
         rows: timesteps
         add_dims:
