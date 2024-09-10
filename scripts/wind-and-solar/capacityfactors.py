@@ -56,7 +56,7 @@ def capacityfactors(
         spatiotemporal=ts,
         gridcell_overlap_threshold=gridcell_overlap_threshold,
     )
-    capacityfactors.where(capacityfactors >= cf_threshold, 0).to_csv(path_to_result)
+    capacityfactors.where(capacityfactors >= cf_threshold, 0).rename_axis(index="timesteps").to_csv(path_to_result)
 
 
 if __name__ == "__main__":
