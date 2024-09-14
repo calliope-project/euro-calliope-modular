@@ -7,16 +7,15 @@ configfile: "config/default.yaml"
 
 
 include: "./rules/shapes.smk"
+include: "./rules/templates.smk"
 include: "./rules/wind-and-solar.smk"
 include: "./rules/biofuels.smk"
 include: "./rules/hydropower.smk"
 include: "./rules/transport.smk"
 include: "./rules/heat.smk"
-include: "./rules/demand.smk"
 include: "./rules/nuclear.smk"
-include: "./rules/model.smk"
 include: "./rules/transmission.smk"
-include: "./rules/templates.smk"
+include: "./rules/demand_electricity.smk"
 
 min_version("8.10")
 
@@ -40,5 +39,6 @@ rule clean:  # removes all generated results
         """
 
 
-onsuccess:
-    shell("snakemake --rulegraph | dot -Tpng > build/dag.png")
+onstart:
+    shell("mkdir -p build")
+    temp(shell("snakemake --rulegraph | dot -Tpng > build/rulegraph.png"))

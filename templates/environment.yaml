@@ -1,7 +1,11 @@
-name: euro-calliope-model
+name: euro-calliope-v07
 channels:
+  - conda-forge/label/calliope_dev
   - conda-forge
   - gurobi
 dependencies:
-  - calliope = v0.7.0.dev3
-  - gurobi = 11.0.3
+  - calliope=0.7.0dev4
+  - gurobi
+  - ipykernel
+  - plotly
+  - matplotlib

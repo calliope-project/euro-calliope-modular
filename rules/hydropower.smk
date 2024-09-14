@@ -20,7 +20,7 @@ rule hydropower_input:
     shell: "cp {input} {output}"
 
 
-rule data_hydro:
+rule hydropower_output:
     message: "Move into place the capacity assumptions and capacityfactor time series for hydro electricity."
     input: # the files produced by hydro module
         supply = "module_hydropower/results/shapes/units/supply_capacity.csv",
