@@ -45,7 +45,7 @@ rule module_with_location_specific_data:
         capacity_factors = config["capacity-factors"]["average"],
         max_power_densities = config["parameters"]["maximum-installable-power-density"],
         # heat_pump_shares = config["parameters"]["heat-pump"]["heat-pump-shares"],
-        biofuel_efficiency = config["parameters"]["biofuel-efficiency"],
+        biofuel_efficiency = config["parameters"]["biofuel"]["efficiency"],
     wildcard_constraints:
         # Exclude all outputs that have their own `techs_and_locations_template` implementation
         group_and_tech = "(?!transmission\/|supply\/biofuel|supply\/electrified-biofuel).*"

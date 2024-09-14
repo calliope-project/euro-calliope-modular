@@ -7,7 +7,7 @@ module module_demand_electricity:
             path="modules/demand_electricity/workflow/Snakefile",
             branch="fix-demand-module" # FIXME: replace tag="vXXX"
         )
-    config: config["demand_electricity"]
+    config: config["module_demand_electricity"]
     prefix: "module_demand_electricity"
 
 use rule * from module_demand_electricity as module_demand_electricity_*

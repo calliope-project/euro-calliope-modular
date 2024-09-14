@@ -1,2 +1,2 @@
-demand_electricity:
+module_demand_electricity:
   use_default_user_resources: false
