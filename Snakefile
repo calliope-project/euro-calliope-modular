@@ -7,8 +7,8 @@ configfile: "config/default.yaml"
 
 
 include: "./rules/shapes.smk"
+include: "./rules/wind_pv.smk"
 include: "./rules/templates.smk"
-include: "./rules/wind-and-solar.smk"
 include: "./rules/biofuels.smk"
 include: "./rules/hydropower.smk"
 include: "./rules/transport.smk"
@@ -28,16 +28,6 @@ rule all:
     default_target: True
     input:
         "build/model/model.yaml" # TODO: add build-metadata.yaml back after modules have matured
-
-
-rule clean:  # removes all generated results
-    localrule: True
-    shell:
-        """
-        rm -r build/
-        echo "Data downloaded to data/automatic/ has not been cleaned."
-        """
-
 
 onstart:
     shell("mkdir -p build")

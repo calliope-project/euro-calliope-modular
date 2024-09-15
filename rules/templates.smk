@@ -43,7 +43,7 @@ rule module_with_location_specific_data:
     params:
         scaling_factors = config["scaling-factors"],
         capacity_factors = config["capacity-factors"]["average"],
-        max_power_densities = config["parameters"]["maximum-installable-power-density"],
+        max_power_densities = config["module_wind_pv"]["maximum_installable_mw_per_km2"],
         # heat_pump_shares = config["parameters"]["heat-pump"]["heat-pump-shares"],
         biofuel_efficiency = config["parameters"]["biofuel"]["efficiency"],
     wildcard_constraints:

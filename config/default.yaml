@@ -21,42 +21,24 @@ scaling-factors: # values are tuned for models with a few hours resolution and o
 ##
 # Assumptions
 ##
-
 data-sources:
-    eez: https://sandbox.zenodo.org/records/45135/files/eez_v11.gpkg.zip?download=1  # FIXME: update to actual zenodo record before next Euro-Calliope release.
-    capacity-factors: https://zenodo.org/record/3899687/files/{filename}?download=1
     gadm: https://geodata.ucdavis.edu/gadm/gadm3.6/gpkg/gadm36_{country_code}_gpkg.zip
     nuts: https://ec.europa.eu/eurostat/cache/GISCO/distribution/v2/nuts/shp/NUTS_RG_01M_{nuts_year}_4326.shp.zip
-    potentials: https://zenodo.org/records/6600619/files/raw-potentials.zip?download=1
     entsoe-tyndp: https://2020.entsos-tyndp-scenarios.eu/wp-content/uploads/2020/06/TYNDP-2020-Scenario-Datafile.xlsx.zip
     jrc-ppdb: https://zenodo.org/record/3574566/files/JRC-PPDB-OPEN.ver1.0.zip
-    population: https://ec.europa.eu/eurostat/cache/GISCO/geodatafiles/JRC_GRID_2018.zip
 
 capacity-factors:
-    min: 0.001
-    max: 10 # 0.001 -> 10 leads to a numerical range of 1e5 (hourly resolution)
     average:
         pv: 0.139 # median of average 2016 open-field factors for ~2700 points in Europe
         onshore: 0.3021 # median of average 2016 factors for ~2700 points in Europe
         offshore: 0.4223 # median of average 2016 factors for ~2800 points in Europe
         ror: 0.536781 # median of average 2016 factors for 1889 hydro stations in Europe
-    trim-ninja-timeseries: True
 parameters:
-    maximum-installable-power-density:
-        pv-on-tilted-roofs: 160 # from [@Gagnon:2016][@Klauser:2016], i.e. 16% efficiency
-        pv-on-flat-areas: 80 # from [@Gagnon:2016][@Klauser:2016][@Wirth:2017]
-        onshore-wind: 8 # from [@EuropeanEnvironmentAgency:2009]
-        offshore-wind: 15 # from [@EuropeanEnvironmentAgency:2009]
-    roof-share: # from [@Trondle:2019]
-        E: 0.1660
-        N: 0.1817
-        S: 0.1821
-        W: 0.1681
-        flat: 0.3020
     biofuel: # from [@Ruiz:2019]
         scenario: medium
         efficiency: 0.45
-    wind-and-solar-potential-scenario: technical-potential
+    wind_pv:
+        scenario: technical-potential
     entsoe-tyndp:
         scenario: National Trends
         grid: Reference
