@@ -2,8 +2,6 @@ build
 data
 module_*/
 
-notebooks
-
 gurobi.log
 
 .vscode

@@ -89,8 +89,8 @@ rule model:
                 "techs/storage/hydro.yaml",
                 "techs/supply/hydro.yaml",
                 "techs/supply/load-shedding.yaml",
-                "techs/supply/open-field-solar-and-wind-onshore.yaml",
-                "techs/supply/rooftop-solar.yaml",
+                "techs/supply/open-field-pv-and-wind-onshore.yaml",
+                "techs/supply/rooftop-pv.yaml",
                 "techs/supply/wind-offshore.yaml",
                 "techs/supply/nuclear.yaml",
             ]

@@ -33,7 +33,11 @@ rule wind_pv_output_timeseries:
 rule wind_pv_output_area_limits:
     message: "Move into place the 'wind_pv' area capacity limits."
     input:
-        area_limit = f"module_wind_pv/results/{config["resolution"]}/{config['parameters']['wind_pv']['scenario']}/"+"{file}.csv",
+        area_limit = (
+            f"module_wind_pv/results/{config["resolution"]}"
+            f"/{config['parameters']['wind_pv']['scenario']}"
+            "/{file}.csv"
+        ),
     output:
         area_limit = "build/data/supply/{file}.csv"
     wildcard_constraints:
