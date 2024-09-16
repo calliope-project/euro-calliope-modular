@@ -5,12 +5,9 @@
 resolution: "national"
 # NB: `spatial-zones` should match the resolution set in `resolution`
 # FIXME: this should be improved one way or another...
-# Options:
-# - ehighways: https://www.dropbox.com/scl/fi/ijfihaqy5eki13nplvrn4/units-ehighways.geojson?rlkey=q0agmofhaklt1pytzef59o1xq&dl=0
-# - national: https://www.dropbox.com/scl/fi/sjjisuqnzck2mhxs9jca7/units-national.geojson?rlkey=rv0q1exsytxws3gfvankbt9p7&dl=0
-spatial-zones: "https://www.dropbox.com/scl/fi/sjjisuqnzck2mhxs9jca7/units-national.geojson?rlkey=rv0q1exsytxws3gfvankbt9p7&dl=0"
-
-crs: "EPSG:4326"  # FIXME: unknown if this is still used
+spatial-zones:
+  national: "https://www.dropbox.com/scl/fi/sjjisuqnzck2mhxs9jca7/units-national.geojson?rlkey=rv0q1exsytxws3gfvankbt9p7&dl=0"
+  ehighways: https://www.dropbox.com/scl/fi/ijfihaqy5eki13nplvrn4/units-ehighways.geojson?rlkey=q0agmofhaklt1pytzef59o1xq&dl=0
 
 scaling-factors: # values are tuned for models with a few hours resolution and one year duration
     power: 0.00001 # from MW(h) to 100 GW(h)
@@ -202,8 +199,7 @@ scope:
             y_min: 30
             y_max: 75
     temporal:
-        first-year: 2016
-        final-year: 2016
+        year: 2016
 shapes: # This config must be consistent with data from https://doi.org/10.5281/zenodo.3244985.
     # TODO: update this link to Bryn's new one, which includes the potentials for ehighways
     continental:

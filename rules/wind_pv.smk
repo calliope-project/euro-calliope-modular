@@ -15,14 +15,14 @@ use rule * from module_wind_pv as module_wind_pv_*
 rule wind_pv_input:
     message: "Input the desired resolution to the 'wind_pv' module."
     input: "build/data/units.geojson"
-    output: "module_wind_pv/resources/user/shapes_national.geojson"
+    output: f"module_wind_pv/resources/user/shapes_{config["resolution"]}.geojson"
     conda: "../envs/shell.yaml"
     shell: "cp {input} {output}"
 
 rule wind_pv_output_timeseries:
     message: "Move into place the 'wind_pv' timeseries."
     input:
-        timeseries = f"module_wind_pv/results/{config["resolution"]}/{config['scope']['temporal']['final-year']}/"+"capacityfactors-{techs}.csv"
+        timeseries = f"module_wind_pv/results/{config["resolution"]}/{config['scope']['temporal']['year']}/"+"capacityfactors-{techs}.csv"
     output:
         timeseries = "build/model/timeseries/supply/capacityfactors-{techs}.csv"
     wildcard_constraints:

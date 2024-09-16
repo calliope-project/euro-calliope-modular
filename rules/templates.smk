@@ -104,7 +104,7 @@ rule model:
             ]
         )
     params:
-        year = config["scope"]["temporal"]["first-year"],
+        year = config["scope"]["temporal"]["year"],
         resolution = config["resolution"],
     conda: "../envs/default.yaml"
     output: "build/model/model.yaml"
