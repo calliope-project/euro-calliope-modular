@@ -5,7 +5,7 @@ module module_demand_electricity:
         github(
             "calliope-project/ec_modules",
             path="modules/demand_electricity/workflow/Snakefile",
-            branch="fix-demand-module" # FIXME: replace tag="vXXX"
+            branch="main" # FIXME: replace tag="vXXX"
         )
     config: config["module_demand_electricity"]
     prefix: "module_demand_electricity"

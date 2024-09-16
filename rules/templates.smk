@@ -7,19 +7,9 @@ ALL_CF_TECHNOLOGIES = [
 ]
 
 wildcard_constraints:
-    group_and_tech = "(demand|storage|supply|transmission)\/\w+"
+    group_and_tech = "(demand|storage|supply|transmission)/"
 
 ruleorder: module_with_location_specific_data > module_without_location_specific_data
-
-# rule module_without_specific_data:
-#     message: "Create configuration files from templates where no parameterisation is required."
-#     input:
-#         template = "templates/model/{template}",
-#     output: "build/model/{template}"
-#     wildcard_constraints:
-#         template = "interest-rate.yaml"
-#     conda: "../envs/shell.yaml"
-#     shell: "cp {input.template} {output}"
 
 rule model_input_locations:
     message: "Generate locations configuration file from template."
