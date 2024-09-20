@@ -1,6 +1,8 @@
 build
 data
 module_*/
+tmp
+notebooks
 
 gurobi.log
 

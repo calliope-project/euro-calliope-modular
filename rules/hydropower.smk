@@ -5,7 +5,7 @@ module module_hydropower:
         github(
             "calliope-project/ec_modules",
             path="modules/hydropower/workflow/Snakefile",
-            branch="main" # FIXME: replace tag="vXXX"
+            tag="v0.0.6"
         )
     config: config["module_hydropower"]
     prefix: "module_hydropower"

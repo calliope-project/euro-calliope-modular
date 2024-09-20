@@ -5,7 +5,7 @@ module module_wind_pv:
         github(
             "calliope-project/ec_modules",
             path="modules/wind_pv/workflow/Snakefile",
-            branch="main" # FIXME: replace tag="vXXX"
+            tag="v0.0.6"
         )
     config: config["module_wind_pv"]
     prefix: "module_wind_pv"

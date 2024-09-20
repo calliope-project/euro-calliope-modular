@@ -7,7 +7,7 @@ module module_biofuels:
         github(
             "calliope-project/ec_modules",
             path="modules/biofuels/workflow/Snakefile",
-            branch="main" # FIXME: replace tag="vXXX"
+            tag="v0.0.6"
         )
     config: config["module_biofuels"]
     prefix: "module_biofuels"
