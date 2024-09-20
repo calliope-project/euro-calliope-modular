@@ -1,7 +1,7 @@
 build
 data
-module-*
-
+module_*/
+tmp
 notebooks
 
 gurobi.log

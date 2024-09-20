@@ -1,69 +1,37 @@
-"""Rules related to biofuels."""
+"""Setup for the 'biofuels' module."""
 
-rule download_biofuel_potentials_and_costs:
-    message: "Download raw biofuel potential and cost data."
-    params: url = config["data-sources"]["biofuel-potentials-and-costs"]
-    output: protected("data/automatic/raw-biofuel-potentials-and-costs.xlsx")
+configfile: "config/modules/biofuels.yaml"
+
+module module_biofuels:
+    snakefile:
+        github(
+            "calliope-project/ec_modules",
+            path="modules/biofuels/workflow/Snakefile",
+            tag="v0.0.6"
+        )
+    config: config["module_biofuels"]
+    prefix: "module_biofuels"
+
+use rule * from module_biofuels as module_biofuels_*
+
+rule biofuel_input:
+    message: "Input the desired resolution to the biofuel module."
+    input: "build/data/units.geojson"
+    output: f"module_biofuels/resources/user/shapes_{config["resolution"]}.geojson"
     conda: "../envs/shell.yaml"
-    localrule: True
-    shell: "curl -sSLo {output} '{params.url}'"
-
-
-rule preprocess_biofuel_potentials_and_cost:
-    message: "Extract national potentials and cost from raw biofuel data."
-    input:
-        potentials_and_costs = rules.download_biofuel_potentials_and_costs.output[0]
-    params:
-        feedstocks = {
-            feedstock["id"]: name
-            for name, feedstock in config["parameters"]["jrc-biofuel"]["feedstocks"].items()
-            if feedstock["include"]
-        }
-    output:
-        potentials = "build/data/raw-biofuel-potentials.csv",
-        costs = "build/data/raw-biofuel-costs.csv"
-    conda: "../envs/default.yaml"
-    script: "../scripts/biofuels/extract.py"
-
-
-rule biofuels:
-    message: "Determine biofuels potential for scenario {wildcards.scenario}."
-    input:
-        units = rules.units_without_shape.output[0],
-        land_cover = rules.potentials.output.land_cover,
-        population = rules.potentials.output.population,
-        national_potentials = rules.preprocess_biofuel_potentials_and_cost.output.potentials,
-        costs = rules.preprocess_biofuel_potentials_and_cost.output.costs
-    params:
-        potential_year = config["parameters"]["jrc-biofuel"]["potential-year"],
-        cost_year = config["parameters"]["jrc-biofuel"]["cost-year"],
-        proxies = {
-            name: feedstock["proxy"]
-            for name, feedstock in config["parameters"]["jrc-biofuel"]["feedstocks"].items()
-            if feedstock["include"]
-        }
-    output:
-        potentials = "build/data/biofuel/{scenario}/potential-mwh-per-year.csv",
-        costs = "build/data/biofuel/{scenario}/costs-eur-per-mwh.csv" # not actually resolution dependent
-    conda: "../envs/default.yaml"
-    wildcard_constraints:
-        scenario = "low|medium|high"
-    script: "../scripts/biofuels/allocate.py"
-
+    shell: "cp {input} {output}"
 
 rule biofuel_tech_module:
     message: "Create {wildcards.tech_module} tech definition file from template."
     input:
-        template = techs_template_dir + "supply/{tech_module}.yaml.jinja",
-        biofuel_cost = "build/data/biofuel/{scenario}/costs-eur-per-mwh.csv".format(
-            scenario=config["parameters"]["jrc-biofuel"]["scenario"]
-        ),
-        locations = "build/data/biofuel/{scenario}/potential-mwh-per-year.csv".format(scenario=config["parameters"]["jrc-biofuel"]["scenario"])
+        template = "templates/model/techs/supply/{tech_module}.yaml.jinja",
+        biofuel_cost = f"module_biofuels/results/{config["resolution"]}/{config["parameters"]["biofuel"]["scenario"]}/costs_eur_per_mwh.csv",
+        locations = f"module_biofuels/results/{config["resolution"]}/{config["parameters"]["biofuel"]["scenario"]}/potential_mwh_per_year.csv"
     params:
         scaling_factors = config["scaling-factors"],
-        biofuel_efficiency = config["parameters"]["biofuel-efficiency"]
+        biofuel_efficiency = config["parameters"]["biofuel"]["efficiency"]
     conda: "../envs/default.yaml"
     output: "build/model/techs/supply/{tech_module}.yaml"
     wildcard_constraints:
         tech_module = "biofuel|electrified-biofuel"
-    script: "../scripts/biofuels/template_bio.py"
+    script: "../scripts/template_bio.py"

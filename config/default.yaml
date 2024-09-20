@@ -2,17 +2,12 @@
 # General configuration
 ##
 
-resolution: &resolution_name "national"
+resolution: "national"
 # NB: `spatial-zones` should match the resolution set in `resolution`
 # FIXME: this should be improved one way or another...
-# Options:
-# - ehighways: https://www.dropbox.com/scl/fi/ijfihaqy5eki13nplvrn4/units-ehighways.geojson?rlkey=q0agmofhaklt1pytzef59o1xq&dl=0
-# - national: https://www.dropbox.com/scl/fi/sjjisuqnzck2mhxs9jca7/units-national.geojson?rlkey=rv0q1exsytxws3gfvankbt9p7&dl=0
-spatial-zones: &resolution_file "https://www.dropbox.com/scl/fi/sjjisuqnzck2mhxs9jca7/units-national.geojson?rlkey=rv0q1exsytxws3gfvankbt9p7&dl=0"
-
-crs: "EPSG:4326"  # FIXME: unknown if this is still used
-
-root-directory: .  # FIXME: is this really necessary? if not, remove it and the associated items in Snakefile
+spatial-zones:
+  national: "https://www.dropbox.com/scl/fi/sjjisuqnzck2mhxs9jca7/units-national.geojson?rlkey=rv0q1exsytxws3gfvankbt9p7&dl=0"
+  ehighways: https://www.dropbox.com/scl/fi/ijfihaqy5eki13nplvrn4/units-ehighways.geojson?rlkey=q0agmofhaklt1pytzef59o1xq&dl=0
 
 scaling-factors: # values are tuned for models with a few hours resolution and one year duration
     power: 0.00001 # from MW(h) to 100 GW(h)
@@ -21,140 +16,26 @@ scaling-factors: # values are tuned for models with a few hours resolution and o
     transport: 0.01  # from Mio km to 100 Mio km
 
 ##
-# Module configuration
-##
-
-download-hydro: false
-download-hydro-url: ""
-module-hydro:
-    resolution-name: *resolution_name
-    # FIXME: the module should not have to separately download the same resolution file
-    resolution-file: *resolution_file
-    first-year: 2016
-    final-year: 2016
-
-##
 # Assumptions
 ##
-
 data-sources:
-    biofuel-potentials-and-costs: https://cidportal.jrc.ec.europa.eu/ftp/jrc-opendata/ENSPRESO/ENSPRESO_BIOMASS.xlsx
-    eez: https://sandbox.zenodo.org/records/45135/files/eez_v11.gpkg.zip?download=1  # FIXME: update to actual zenodo record before next Euro-Calliope release.
-    capacity-factors: https://zenodo.org/record/3899687/files/{filename}?download=1
     gadm: https://geodata.ucdavis.edu/gadm/gadm3.6/gpkg/gadm36_{country_code}_gpkg.zip
-    load: https://data.open-power-system-data.org/time_series/2019-06-05/time_series_60min_stacked.csv
     nuts: https://ec.europa.eu/eurostat/cache/GISCO/distribution/v2/nuts/shp/NUTS_RG_01M_{nuts_year}_4326.shp.zip
-    potentials: https://zenodo.org/records/6600619/files/raw-potentials.zip?download=1
     entsoe-tyndp: https://2020.entsos-tyndp-scenarios.eu/wp-content/uploads/2020/06/TYNDP-2020-Scenario-Datafile.xlsx.zip
     jrc-ppdb: https://zenodo.org/record/3574566/files/JRC-PPDB-OPEN.ver1.0.zip
-    eurostat-energy-balance: https://raw.githubusercontent.com/calliope-project/euro-calliope-datasets/feature-sector-coupling/eurostat/nrg_bal_c.tsv.gz # FIXME: move to zenodo
-    eurostat-hh-end-use:  https://raw.githubusercontent.com/calliope-project/euro-calliope-datasets/feature-sector-coupling/eurostat/nrg_d_hhq.tsv.gz # FIXME: move to zenodo
-    swiss-end-use: https://www.bfe.admin.ch/bfe/en/home/versorgung/statistik-und-geodaten/energiestatistiken/energieverbrauch-nach-verwendungszweck.exturl.html/aHR0cHM6Ly9wdWJkYi5iZmUuYWRtaW4uY2gvZGUvcHVibGljYX/Rpb24vZG93bmxvYWQvOTg1NA==.html
-    swiss-energy-balance: https://www.bfe.admin.ch/bfe/en/home/versorgung/statistik-und-geodaten/energiestatistiken/gesamtenergiestatistik.exturl.html/aHR0cHM6Ly9wdWJkYi5iZmUuYWRtaW4uY2gvZGUvcHVibGljYX/Rpb24vZG93bmxvYWQvNzUxOQ==.html
-    swiss-industry-energy-balance: https://www.bfe.admin.ch/bfe/en/home/versorgung/statistik-und-geodaten/energiestatistiken/teilstatistiken.exturl.html/aHR0cHM6Ly9wdWJkYi5iZmUuYWRtaW4uY2gvZGUvcHVibGljYX/Rpb24vZG93bmxvYWQvODc4OA==.html
-    controlled-ev-profiles: https://zenodo.org/record/6579421/files/ramp-ev-{dataset}.csv.gz?download=1
-    uncontrolled-ev-profiles: https://sandbox.zenodo.org/records/45530/files/uncontrolled-charging-profiles.csv.gz?download=1 # TODO: convert into Zenodo repository
-    gridded-weather-data: https://zenodo.org/records/11516744/files/{data_var}.nc
-    when2heat-params: https://zenodo.org/records/10965295/files/{dataset}?download=1
-    population: https://ec.europa.eu/eurostat/cache/GISCO/geodatafiles/JRC_GRID_2018.zip
-    heat-pump-characteristics: https://sandbox.zenodo.org/records/45378/files/wamak-heat-pump-characteristics.nc
 
 capacity-factors:
-    min: 0.001
-    max: 10 # 0.001 -> 10 leads to a numerical range of 1e5 (hourly resolution)
     average:
         pv: 0.139 # median of average 2016 open-field factors for ~2700 points in Europe
         onshore: 0.3021 # median of average 2016 factors for ~2700 points in Europe
         offshore: 0.4223 # median of average 2016 factors for ~2800 points in Europe
         ror: 0.536781 # median of average 2016 factors for 1889 hydro stations in Europe
-    trim-ninja-timeseries: True
 parameters:
-    maximum-installable-power-density:
-        pv-on-tilted-roofs: 160 # from [@Gagnon:2016][@Klauser:2016], i.e. 16% efficiency
-        pv-on-flat-areas: 80 # from [@Gagnon:2016][@Klauser:2016][@Wirth:2017]
-        onshore-wind: 8 # from [@EuropeanEnvironmentAgency:2009]
-        offshore-wind: 15 # from [@EuropeanEnvironmentAgency:2009]
-    roof-share: # from [@Trondle:2019]
-        E: 0.1660
-        N: 0.1817
-        S: 0.1821
-        W: 0.1681
-        flat: 0.3020
-    jrc-biofuel: # from [@Ruiz:2019]
+    biofuel: # from [@Ruiz:2019]
         scenario: medium
-        potential-year: 2020
-        cost-year: 2020
-        feedstocks: # ASSUME no energy crop feedstocks available.
-            bioethanol-sugar-beet:
-                include: false
-                id: MINBIOCRP21
-                proxy: farmland
-            rapeseeds:
-                include: false
-                id: MINBIORPS1
-                proxy: farmland
-            oil-crops:
-                include: false
-                id: MINBIOLIQ1
-                proxy: farmland
-            starchy-crops:
-                include: false
-                id: MINBIOCRP11
-                proxy: farmland
-            grassy-crops:
-                include: false
-                id: MINBIOCRP31
-                proxy: farmland
-            willow:
-                include: false
-                id: MINBIOCRP41
-                proxy: forest
-            poplar:
-                include: false
-                id: MINBIOCRP41a
-                proxy: forest
-            manure:
-                include: true
-                id: MINBIOGAS1
-                proxy: farmland
-            primary-agricultural-residues:
-                include: true
-                id: MINBIOAGRW1
-                proxy: farmland
-            roundwood-fuelwood:
-                include: true
-                id: MINBIOWOO
-                proxy: forest
-            roundwood-chips:
-                include: true
-                id: MINBIOWOOa
-                proxy: forest
-            forestry-energy-residues:
-                include: true
-                id: MINBIOFRSR1
-                proxy: forest
-            secondary-forestry-residues-woodchips:
-                include: true
-                id: MINBIOWOOW1
-                proxy: forest
-            secondary-forestry-residues-sawdust:
-                include: true
-                id: MINBIOWOOW1a
-                proxy: forest
-            landscape-care-residues:
-                include: true
-                id: MINBIOFRSR1a
-                proxy: forest
-            municipal-waste:
-                include: true
-                id: MINBIOMUN1
-                proxy: population
-            sludge:
-                include: true
-                id: MINBIOSLU1
-                proxy: population
-    biofuel-efficiency: 0.45
-    wind-and-solar-potential-scenario: technical-potential
+        efficiency: 0.45
+    wind_pv:
+        scenario: technical-potential
     entsoe-tyndp:
         scenario: National Trends
         grid: Reference
@@ -179,9 +60,6 @@ quality-control:
         data-source-priority-order:
             - actual_entsoe_transparency
             - actual_entsoe_power_statistics
-    hydro:
-        scale-phs-according-to-geth-et-al: false
-        station-nearest-basin-max-km: 1
     capacity-factor-gridcell-overlap-threshold: 0.97 # Ceuta y Melilla has smallest overlap
     shared-coast-polygon-area-share-threshold: 0.01
 
@@ -321,8 +199,7 @@ scope:
             y_min: 30
             y_max: 75
     temporal:
-        first-year: 2016
-        final-year: 2016
+        year: 2016
 shapes: # This config must be consistent with data from https://doi.org/10.5281/zenodo.3244985.
     # TODO: update this link to Bryn's new one, which includes the potentials for ehighways
     continental:

@@ -1,17 +1,26 @@
 import:
-    {% for file in input_files %}
-    - {{ file }}
-    {% endfor %}
-model:
+  {% for file in input_files %}
+  - {{ file }}
+  {% endfor %}
+
+config:
+  init:
     name: 'Example model'
-    calliope_version: 0.6.10
-    timeseries_data_path: ./timeseries
-    subset_time: ['{{ year }}-01-01', '{{ year }}-01-01']
-run:
-    solver: gurobi
-    solver_io: python
+    calliope_version: 0.7.0
+    time_subset: ['{{ year }}-01-01', '{{ year }}-01-01']
+  build:
     mode: plan
-    objective_options: {
-        'cost_class': {'monetary': 1},
-        'sense': 'minimize'
-    }
+    backend: pyomo
+  solve:
+    solver: gurobi
+
+parameters:
+  objective_cost_weights:
+    data: 1
+    index: monetary
+    dims: costs
+  cost_interest_rate:
+    data: 0.073  # average wind onshore WACC OECD from [@Steffen:2019]
+    index: monetary
+    dims: costs
+  bigM: 1e6

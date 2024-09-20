@@ -1,0 +1,42 @@
+configfile: "config/modules/hydropower.yaml"
+
+module module_hydropower:
+    snakefile:
+        github(
+            "calliope-project/ec_modules",
+            path="modules/hydropower/workflow/Snakefile",
+            tag="v0.0.6"
+        )
+    config: config["module_hydropower"]
+    prefix: "module_hydropower"
+
+use rule * from module_hydropower as module_hydropower_*
+
+rule hydropower_input:
+    message: "Input the desired resolution to the hydropower module."
+    input: "build/data/units.geojson"
+    output: f"module_hydropower/resources/user/{config["resolution"]}.geojson"
+    conda: "../envs/shell.yaml"
+    shell: "cp {input} {output}"
+
+
+rule hydropower_output:
+    message: "Move into place the capacity assumptions and capacityfactor time series for hydro electricity."
+    input: # the files produced by hydro module
+        supply = f"module_hydropower/results/shapes/{config["resolution"]}/supply_capacity.csv",
+        storage = f"module_hydropower/results/shapes/{config["resolution"]}/storage_capacity.csv",
+        ror = f"module_hydropower/results/shapes/{config["resolution"]}/{config['scope']['temporal']['year']}/capacity_factors_ror.csv",
+        reservoir = f"module_hydropower/results/shapes/{config["resolution"]}/{config['scope']['temporal']['year']}/capacity_factors_reservoir.csv",
+    output: # the desired locations of the files in the main workflow
+        supply = "build/data/supply/hydro.csv",
+        storage = "build/data/storage/hydro.csv",
+        ror = "build/model/timeseries/supply/capacityfactors-hydro-run-of-river.csv",
+        reservoir = "build/model/timeseries/supply/capacityfactors-hydro-reservoir.csv",
+    conda: "../envs/shell.yaml"
+    shell:
+        """
+        cp {input.supply} {output.supply}
+        cp {input.storage} {output.storage}
+        cp {input.ror} {output.ror}
+        cp {input.reservoir} {output.reservoir}
+        """

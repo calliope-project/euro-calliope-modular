@@ -1,4 +1,5 @@
-# http://editorconfig.org
+# Documentation: https://EditorConfig.org
+# Inspired by Django .editorconfig file
 
 root = true
 
@@ -6,9 +7,15 @@ root = true
 indent_style = space
 indent_size = 4
 trim_trailing_whitespace = true
+end_of_line = lf
 insert_final_newline = true
 charset = utf-8
-end_of_line = lf
 
-[LICENSE]
-insert_final_newline = false
+[*.{yaml,yml,yaml.jinja,yml.jinja}]
+indent_size = 2
+
+[*.md]
+indent_size = 2
+
+[*.{diff,patch}]
+trim_trailing_whitespace = false
